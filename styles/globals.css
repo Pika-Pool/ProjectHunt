@@ -1,3 +1,9 @@
+:root {
+	/* all colors are in hsl */
+	/* --color-primary: hsl(118, 67%, 48%); */
+	--color-primary: 115 47% 48%;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -52,7 +58,7 @@
 		line-height: 1.5;
 
 		/* DM Sans and Poppins are imported in pages/_document.js using link tag */
-		@apply font-primary;
+		@apply font-sans;
 	}
 
 	/* A elements that don't have a class get default styles */

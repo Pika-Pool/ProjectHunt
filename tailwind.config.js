@@ -7,9 +7,22 @@ module.exports = {
 	theme: {
 		extend: {
 			fontFamily: {
-				primary: 'Poppins, sans-serif',
+				sans: 'Poppins, sans-serif',
+				serif: 'Lora, serif',
+			},
+			colors: {
+				primary: withOpacityValue('--color-primary'),
 			},
 		},
 	},
 	plugins: [],
 };
+
+function withOpacityValue(variable) {
+	return ({ opacityValue }) => {
+		if (opacityValue === undefined) {
+			return `hsl(var(${variable}))`;
+		}
+		return `hsl(var(${variable}) / ${opacityValue})`;
+	};
+}
