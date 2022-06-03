@@ -18,9 +18,8 @@ export default function CTAButton({
 }: LoadingButtonProps) {
 	return (
 		<button
-			type='submit'
 			disabled={isLoading}
-			className={`cursor-pointer ${className}`}
+			className={`cursor-pointer w-full px-3 py-2 bg-primary text-white uppercase text-xl font-bold ${className}`}
 			{...buttonProps}
 		>
 			{isLoading ? (
