@@ -1,12 +1,43 @@
 import Link from 'next/link';
+import type { FormEvent } from 'react';
+import toast from 'react-hot-toast';
+import { useMutation } from 'react-query';
 import AuthLayout from '../../components/AuthLayout';
-import { emailRegex } from '../../lib/constants';
+import CTAButton from '../../components/CTAButton';
+import { useAuthUser } from '../../contexts/AuthUser';
+import useLoadingToast from '../../hooks/useLoadingToast';
+import useRedirectOnLoggedIn from '../../hooks/useRedirectOnLoggedIn';
+import { defaultAuthRequest } from '../../lib/authRequests';
+import { usernameRegex } from '../../lib/constants';
 import styles from '../../styles/authForm.module.css';
 import type { NextPageWithLayout } from '../_app';
 
 const Login: NextPageWithLayout = () => {
+	const { setUser } = useAuthUser();
+
+	const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
+		const formData = new FormData(e.target as HTMLFormElement);
+		return defaultAuthRequest('/accounts/login/', formData);
+	};
+
+	const { isLoading, mutate } = useMutation(handleSubmit, {
+		onError(err) {
+			toast.error('Invalid Username or Password. Try again');
+			console.error(err);
+		},
+		onSuccess(data) {
+			toast.success('Successfully logged in');
+			setUser({ key: data.key });
+			console.log({ data });
+		},
+	});
+
+	useLoadingToast({ isLoading });
+	useRedirectOnLoggedIn();
+
 	return (
-		<form className={styles.authForm}>
+		<form className={styles.authForm} onSubmit={mutate}>
 			<div className='mb-4 text-sm'>
 				<h2 className={styles.authForm__heading} style={{ marginBottom: 0 }}>
 					Login
@@ -14,21 +45,21 @@ const Login: NextPageWithLayout = () => {
 
 				<div>
 					Don&lsquo;t have an account?{' '}
-					<Link href='register'>
+					<Link href='/auth/register'>
 						<a className='text-blue-500'>Create account</a>
 					</Link>
 				</div>
 			</div>
 
 			<div>
-				<label htmlFor='email'>Email</label>
+				<label htmlFor='username'>Username</label>
 				<input
-					type='email'
-					name='email'
-					id='email'
-					placeholder='Email ID'
+					type='username'
+					name='username'
+					id='username'
+					placeholder='Username'
+					pattern={usernameRegex.source}
 					required
-					pattern={emailRegex.source}
 				/>
 			</div>
 
@@ -41,14 +72,15 @@ const Login: NextPageWithLayout = () => {
 					autoComplete='current-password'
 					placeholder='Password'
 					minLength={8}
+					required
 				/>
 			</div>
 
 			<div>
-				<button type='submit'>Login</button>
+				<CTAButton text='Login' type='submit' isLoading={isLoading} />
 
 				<div className='text-center'>
-					<Link href='forgot-password'>
+					<Link href='/auth/forgot-password'>
 						<a className='text-blue-500'>Forgot Password?</a>
 					</Link>
 				</div>

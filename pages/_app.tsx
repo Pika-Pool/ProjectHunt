@@ -1,7 +1,10 @@
 import type { NextPage } from 'next';
 import type { AppProps } from 'next/app';
-import type { ReactElement, ReactNode } from 'react';
+import { useState, type ReactElement, type ReactNode } from 'react';
+import { Toaster } from 'react-hot-toast';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import GlobalLayout from '../components/GlobalLayout';
+import AuthUserProvider from '../contexts/AuthUser';
 import '../styles/globals.css';
 
 export type NextPageWithLayout = NextPage & {
@@ -14,12 +17,23 @@ interface AppPropsWithLayout extends AppProps {
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const getLayout = Component.getLayout;
+	const [queryClient] = useState(() => new QueryClient());
 
-	if (getLayout) return getLayout(<Component {...pageProps} />);
 	return (
-		<GlobalLayout>
-			<Component {...pageProps} />
-		</GlobalLayout>
+		// Provide the client to your App
+		<QueryClientProvider client={queryClient}>
+			<AuthUserProvider>
+				<Toaster />
+
+				{getLayout ? (
+					getLayout(<Component {...pageProps} />)
+				) : (
+					<GlobalLayout>
+						<Component {...pageProps} />
+					</GlobalLayout>
+				)}
+			</AuthUserProvider>
+		</QueryClientProvider>
 	);
 }
 

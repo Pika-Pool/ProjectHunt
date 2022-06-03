@@ -8,7 +8,7 @@ export default function GlobalLayout({
 	return (
 		<>
 			<Header />
-			<main>{children}</main>
+			<main className='mt-3'>{children}</main>
 			<FooterNav />
 		</>
 	);

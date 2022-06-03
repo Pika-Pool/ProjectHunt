@@ -1,12 +1,44 @@
 import Link from 'next/link';
+import { useState, type FormEvent } from 'react';
+import toast from 'react-hot-toast';
+import { useMutation } from 'react-query';
 import AuthLayout from '../../components/AuthLayout';
-import { emailRegex } from '../../lib/constants';
+import CTAButton from '../../components/CTAButton';
+import { useAuthUser } from '../../contexts/AuthUser';
+import useLoadingToast from '../../hooks/useLoadingToast';
+import useRedirectOnLoggedIn from '../../hooks/useRedirectOnLoggedIn';
+import { defaultAuthRequest } from '../../lib/authRequests';
+import { usernameRegex } from '../../lib/constants';
 import styles from '../../styles/authForm.module.css';
 import type { NextPageWithLayout } from '../_app';
 
 const Register: NextPageWithLayout = () => {
+	const [password, setPassword] = useState('');
+	const { setUser } = useAuthUser();
+
+	const handleFormSubmit = (e: FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
+		const formData = new FormData(e.target as HTMLFormElement);
+		return defaultAuthRequest('/accounts/registration/', formData);
+	};
+
+	const { isLoading, mutate } = useMutation(handleFormSubmit, {
+		onError(err) {
+			toast.error('Invalid Username or Password. Try again');
+			console.error(err);
+		},
+		onSuccess(data) {
+			toast.success('Successfully registered and logged in');
+			setUser({ key: data.key });
+			console.log({ data });
+		},
+	});
+
+	useLoadingToast({ isLoading });
+	useRedirectOnLoggedIn();
+
 	return (
-		<form className={styles.authForm}>
+		<form className={styles.authForm} onSubmit={mutate}>
 			<div className='mb-4 text-sm'>
 				<h2 className={styles.authForm__heading} style={{ marginBottom: 0 }}>
 					Register
@@ -14,7 +46,7 @@ const Register: NextPageWithLayout = () => {
 
 				<div>
 					Already have an account?{' '}
-					<Link href='login'>
+					<Link href='/auth/login'>
 						<a className='text-blue-500'>Login here.</a>
 					</Link>
 				</div>
@@ -29,7 +61,7 @@ const Register: NextPageWithLayout = () => {
 					placeholder='Username'
 					required
 					minLength={3}
-					pattern={/^\S$/.source}
+					pattern={usernameRegex.source}
 				/>
 			</div>
 
@@ -41,7 +73,6 @@ const Register: NextPageWithLayout = () => {
 					id='email'
 					placeholder='Email ID'
 					required
-					pattern={emailRegex.source}
 				/>
 			</div>
 
@@ -54,6 +85,8 @@ const Register: NextPageWithLayout = () => {
 					autoComplete='new-password'
 					placeholder='Password'
 					required
+					value={password}
+					onChange={e => setPassword(e.target.value)}
 				/>
 			</div>
 
@@ -66,11 +99,12 @@ const Register: NextPageWithLayout = () => {
 					autoComplete='new-password'
 					placeholder='Retype Password'
 					required
+					pattern={password}
 				/>
 			</div>
 
 			<div>
-				<button type='submit'>Register</button>
+				<CTAButton text='Register' type='submit' isLoading={isLoading} />
 			</div>
 		</form>
 	);

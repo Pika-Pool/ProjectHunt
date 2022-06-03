@@ -13,9 +13,11 @@ module.exports = {
 			colors: {
 				primary: withOpacityValue('--color-primary'),
 			},
+			animation: { 'spin-medium': 'spin 0.5s linear infinite' },
 		},
 	},
 	plugins: [],
+	darkMode: 'class',
 };
 
 function withOpacityValue(variable) {

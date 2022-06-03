@@ -1,11 +1,37 @@
+import type { FormEvent } from 'react';
+import toast from 'react-hot-toast';
+import { useMutation } from 'react-query';
 import AuthLayout from '../../components/AuthLayout';
-import { emailRegex } from '../../lib/constants';
+import CTAButton from '../../components/CTAButton';
+import useLoadingToast from '../../hooks/useLoadingToast';
+import useRedirectOnLoggedIn from '../../hooks/useRedirectOnLoggedIn';
+import { defaultAuthRequest } from '../../lib/authRequests';
 import styles from '../../styles/authForm.module.css';
 import type { NextPageWithLayout } from '../_app';
 
 const ForgotPassword: NextPageWithLayout = () => {
+	const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
+		const formData = new FormData(e.target as HTMLFormElement);
+		return defaultAuthRequest('/accounts/password/reset/', formData);
+	};
+
+	const { isLoading, mutate } = useMutation(handleSubmit, {
+		onError(err) {
+			toast.error('Something went wrong. Please try again later');
+			console.error('err', err);
+		},
+		onSuccess(data) {
+			toast.success('Check your email for reset password');
+			console.log({ data });
+		},
+	});
+
+	useLoadingToast({ isLoading });
+	useRedirectOnLoggedIn();
+
 	return (
-		<form className={styles.authForm}>
+		<form className={styles.authForm} onSubmit={mutate}>
 			<h2 className={styles.authForm__heading}>Reset Password</h2>
 
 			<div>
@@ -15,12 +41,12 @@ const ForgotPassword: NextPageWithLayout = () => {
 					name='email'
 					id='email'
 					placeholder='Email ID'
-					pattern={emailRegex.source}
+					required
 				/>
 			</div>
 
 			<div>
-				<button type='submit'>Get reset link</button>
+				<CTAButton text='Get Reset Link' type='submit' isLoading={isLoading} />
 			</div>
 		</form>
 	);
