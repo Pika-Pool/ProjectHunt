@@ -16,8 +16,9 @@ const NavLink = ({ href, content, ...linkProps }: NavLinkProps) => {
 		<Link href={href} {...linkProps}>
 			<a
 				className={classnames(
-					'flex flex-col justify-center items-center text-xs text-gray-500 hover:text-primary',
+					'flex flex-col justify-center items-center text-xs hover:text-primary',
 					{ 'text-primary': router.pathname === href },
+					{ 'text-gray-500': router.pathname !== href },
 				)}
 			>
 				{content}

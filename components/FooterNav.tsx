@@ -10,7 +10,7 @@ import NavLink from './NavLink';
 export default function FooterNav() {
 	return (
 		<footer
-			className='fixed bottom-0 left-0 w-full p-2'
+			className='fixed bottom-0 left-0 w-full p-2 bg-white'
 			style={{
 				boxShadow:
 					'0 -10px 15px -3px rgb(0 0 0 / 0.1), 0 -4px 6px -4px rgb(0 0 0 / 0.1)',
