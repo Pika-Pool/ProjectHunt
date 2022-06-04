@@ -8,6 +8,7 @@ import {
 	type UseFormProps,
 } from 'react-hook-form';
 import { useMutation, useQuery } from 'react-query';
+import ClientOnly from '../components/ClientOnly';
 import ControlledMultiSelect from '../components/ControlledMultiSelect';
 import CTAButton from '../components/CTAButton';
 import { useAuthUser } from '../contexts/AuthUser';
@@ -34,10 +35,7 @@ const Submit: NextPage = () => {
 	>(projectSubmitFormDraftStorageKey, {});
 
 	const { register, handleSubmit, control, watch } = useForm<FormValues>({
-		shouldUseNativeValidation: true,
-		// ! loading tags causes Hydration Error due to the CreatableSelec component
-		// ! remove this after fixing it
-		defaultValues: (() => ({ ...formDraft, tags: [] }))(),
+		defaultValues: formDraft,
 	});
 
 	// save form data to localStorage
@@ -123,16 +121,18 @@ const Submit: NextPage = () => {
 
 				<div>
 					<label htmlFor='tags'>Tags</label>
-					<ControlledMultiSelect
-						control={control}
-						name='tags'
-						instanceId='tags'
-						inputId='tags'
-						options={filteredTagsToSelectOptions(tags ?? [])}
-						isLoading={isTagsLoading}
-						allowCreateWhileLoading
-						createOptionPosition='last'
-					/>
+					<ClientOnly>
+						<ControlledMultiSelect
+							control={control}
+							name='tags'
+							instanceId='tags'
+							inputId='tags'
+							options={filteredTagsToSelectOptions(tags ?? [])}
+							isLoading={isTagsLoading}
+							allowCreateWhileLoading
+							createOptionPosition='last'
+						/>
+					</ClientOnly>
 				</div>
 
 				<div>
