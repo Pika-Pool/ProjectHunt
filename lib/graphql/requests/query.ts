@@ -8,7 +8,6 @@ import graphqlClient from '../../graphqlClient';
 import { getAllTagsGQL, getFilteredTagsGQL } from '../documents/query';
 
 export async function getAllTags() {
-	// throw new Error('hello');
 	const { allTag } = await graphqlClient.request<
 		GetAllTagsQuery,
 		GetAllTagsQueryVariables

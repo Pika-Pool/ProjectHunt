@@ -8,3 +8,4 @@ export const ColorThemeStorageKey = 'colorTheme';
 export const ColorThemeOptions = ['OS', 'light', 'dark'];
 
 export const userAuthKeyLocalStorageKey = 'userData';
+export const projectSubmitFormDraftStorageKey = 'projectSubmitFormDraft';
