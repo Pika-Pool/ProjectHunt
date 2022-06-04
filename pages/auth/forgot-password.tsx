@@ -35,8 +35,11 @@ const ForgotPassword: NextPageWithLayout = () => {
 			<h2 className={styles.authForm__heading}>Reset Password</h2>
 
 			<div>
-				<label htmlFor='email'>Email</label>
+				<label className={styles.authForm__label} htmlFor='email'>
+					Email
+				</label>
 				<input
+					className={styles.authForm__input}
 					type='email'
 					name='email'
 					id='email'

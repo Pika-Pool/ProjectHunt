@@ -6,17 +6,14 @@
 	@apply text-2xl underline uppercase mb-4 tracking-wide;
 }
 
-.authForm label,
 .authForm__label {
 	@apply text-sm;
 }
 
-.authForm input,
 .authForm__input {
 	@apply block w-full border-2 rounded-full px-3 py-1;
 }
 
-.authForm button[type='submit'],
 .authForm__submitBtn {
 	@apply w-full px-3 py-2 bg-primary rounded-full text-white uppercase text-xl font-bold;
 }

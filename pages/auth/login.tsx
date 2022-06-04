@@ -52,8 +52,11 @@ const Login: NextPageWithLayout = () => {
 			</div>
 
 			<div>
-				<label htmlFor='username'>Username</label>
+				<label className={styles.authForm__label} htmlFor='username'>
+					Username
+				</label>
 				<input
+					className={styles.authForm__input}
 					type='username'
 					name='username'
 					id='username'
@@ -64,8 +67,11 @@ const Login: NextPageWithLayout = () => {
 			</div>
 
 			<div>
-				<label htmlFor='password'>Password</label>
+				<label className={styles.authForm__label} htmlFor='password'>
+					Password
+				</label>
 				<input
+					className={styles.authForm__input}
 					type='password'
 					name='password'
 					id='password'
