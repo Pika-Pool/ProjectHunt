@@ -7,16 +7,14 @@ import {
 	type SubmitHandler,
 	type UseFormProps,
 } from 'react-hook-form';
-import { useMutation, useQuery } from 'react-query';
-import ClientOnly from '../components/ClientOnly';
-import ControlledMultiSelect from '../components/ControlledMultiSelect';
+import { useMutation } from 'react-query';
 import CTAButton from '../components/CTAButton';
+import TagsSelect from '../components/TagsSelect';
 import { useAuthUser } from '../contexts/AuthUser';
 import useLoadingToast from '../hooks/useLoadingToast';
 import useLocalStorage from '../hooks/useLocalStorage';
 import { projectSubmitFormDraftStorageKey } from '../lib/constants';
 import { createNewProjectReq } from '../lib/graphql/requests/mutation';
-import { getAllTags } from '../lib/graphql/requests/query';
 import styles from '../styles/authForm.module.css';
 
 interface FormValues {
@@ -36,6 +34,7 @@ const Submit: NextPage = () => {
 
 	const { register, handleSubmit, control, watch } = useForm<FormValues>({
 		defaultValues: formDraft,
+		shouldUseNativeValidation: true,
 	});
 
 	// save form data to localStorage
@@ -60,14 +59,11 @@ const Submit: NextPage = () => {
 		else mutate(data);
 	};
 
-	// get available tags
-	const { data: tags, isLoading: isTagsLoading } = useQuery(
-		'allTags',
-		getAllTags,
-	);
-
 	return (
-		<div className='flex justify-center items-center w-full'>
+		<fieldset
+			disabled={isLoading}
+			className='flex justify-center items-center w-full'
+		>
 			<form
 				className='w-full max-w-4xl mt-10 mx-5 p-5 flex flex-col gap-4 border-2 border-primary rounded'
 				onSubmit={handleSubmit(onFormSubmit)}
@@ -120,26 +116,14 @@ const Submit: NextPage = () => {
 				</div>
 
 				<div>
-					<label htmlFor='tags'>Tags</label>
-					<ClientOnly>
-						<ControlledMultiSelect
-							control={control}
-							name='tags'
-							instanceId='tags'
-							inputId='tags'
-							options={filteredTagsToSelectOptions(tags ?? [])}
-							isLoading={isTagsLoading}
-							allowCreateWhileLoading
-							createOptionPosition='last'
-						/>
-					</ClientOnly>
+					<TagsSelect control={control} />
 				</div>
 
 				<div>
 					<CTAButton text='Submit' type='submit' isLoading={isLoading} />
 				</div>
 			</form>
-		</div>
+		</fieldset>
 	);
 };
 
@@ -157,15 +141,3 @@ const SubmitPageInput = React.forwardRef<
 		/>
 	);
 });
-
-type ReactSelectOption = Record<'value' | 'label', string>;
-function filteredTagsToSelectOptions(
-	tags: ({ id: string; tagName: string } | null)[],
-) {
-	return tags
-		?.map(tag => {
-			if (tag) return { value: tag.tagName, label: tag.tagName };
-			return null;
-		})
-		.filter((tagOption): tagOption is ReactSelectOption => Boolean(tagOption));
-}
