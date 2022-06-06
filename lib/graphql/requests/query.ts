@@ -1,11 +1,17 @@
 import type {
+	GetAllProjectsQuery,
+	GetAllProjectsQueryVariables,
 	GetAllTagsQuery,
 	GetAllTagsQueryVariables,
 	GetFilteredTagsQuery,
 	GetFilteredTagsQueryVariables,
 } from '../../../types/graphql';
 import graphqlClient from '../../graphqlClient';
-import { getAllTagsGQL, getFilteredTagsGQL } from '../documents/query';
+import {
+	getAllProjectsGQL,
+	getAllTagsGQL,
+	getFilteredTagsGQL,
+} from '../documents/query';
 
 export async function getAllTags() {
 	const { allTag } = await graphqlClient.request<
@@ -23,4 +29,13 @@ export async function getFilteredTags(inputString: string) {
 	>(getFilteredTagsGQL, { inputString });
 
 	return filterTag;
+}
+
+export async function getAllProjects() {
+	const { allProject } = await graphqlClient.request<
+		GetAllProjectsQuery,
+		GetAllProjectsQueryVariables
+	>(getAllProjectsGQL);
+
+	return allProject;
 }

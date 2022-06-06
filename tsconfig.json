@@ -52,6 +52,13 @@
 		/* Completeness */
 		"skipLibCheck": true
 	},
-	"include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
+	"include": [
+		"next-env.d.ts",
+		"**/*.ts",
+		"**/*.tsx",
+		"**/*.js",
+		"**/*.jsx",
+		"types"
+	],
 	"exclude": ["node_modules"]
 }

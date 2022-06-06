@@ -302,3 +302,20 @@ export type GetFilteredTagsQuery = {
 		tagName: string;
 	} | null> | null;
 };
+
+export type GetAllProjectsQueryVariables = Exact<{ [key: string]: never }>;
+
+export type GetAllProjectsQuery = {
+	__typename?: 'Query';
+	allProject?: Array<{
+		__typename?: 'ProjectType';
+		id: string;
+		logo: string;
+		name: string;
+		subtitle: string;
+		postedAt: any;
+		upvote: number;
+		tag: Array<{ __typename?: 'TagType'; tagName: string }>;
+		comments: Array<{ __typename?: 'CommentType'; id: string }>;
+	} | null> | null;
+};

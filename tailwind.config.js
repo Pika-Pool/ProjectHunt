@@ -14,6 +14,7 @@ module.exports = {
 				primary: withOpacityValue('--color-primary'),
 			},
 			animation: { 'spin-medium': 'spin 0.5s linear infinite' },
+			fontSize: { 'sm-em': ['0.875em', '1.25rem'] },
 		},
 	},
 	plugins: [],

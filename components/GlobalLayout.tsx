@@ -8,7 +8,7 @@ export default function GlobalLayout({
 	return (
 		<>
 			<Header />
-			<main className='mt-3 pb-[75px]'>{children}</main>
+			<main className='mt-4 pb-[75px]'>{children}</main>
 			<FooterNav />
 		</>
 	);

@@ -17,3 +17,22 @@ export const getFilteredTagsGQL = gql`
 		}
 	}
 `;
+
+export const getAllProjectsGQL = gql`
+	query getAllProjects {
+		allProject {
+			id
+			logo
+			name
+			subtitle
+			postedAt
+			upvote
+			tag {
+				tagName
+			}
+			comments {
+				id
+			}
+		}
+	}
+`;
