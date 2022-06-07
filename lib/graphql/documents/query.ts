@@ -1,4 +1,5 @@
 import { gql } from 'graphql-request';
+import { projectsListGQLFrag } from './fragments';
 
 export const getAllTagsGQL = gql`
 	query getAllTags {
@@ -19,20 +20,19 @@ export const getFilteredTagsGQL = gql`
 `;
 
 export const getAllProjectsGQL = gql`
+	${projectsListGQLFrag}
 	query getAllProjects {
 		allProject {
-			id
-			logo
-			name
-			subtitle
-			postedAt
-			upvote
-			tag {
-				tagName
-			}
-			comments {
-				id
-			}
+			...projectsListGQLFrag
+		}
+	}
+`;
+
+export const getFilteredProjectsGQL = gql`
+	${projectsListGQLFrag}
+	query filterProjects($searchTerm: String!) {
+		filterProject(textToSearch: $searchTerm) {
+			...projectsListGQLFrag
 		}
 	}
 `;

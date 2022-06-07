@@ -1,4 +1,6 @@
 import type {
+	FilterProjectsQuery,
+	FilterProjectsQueryVariables,
 	GetAllProjectsQuery,
 	GetAllProjectsQueryVariables,
 	GetAllTagsQuery,
@@ -14,6 +16,7 @@ import graphqlClient from '../../graphqlClient';
 import {
 	getAllProjectsGQL,
 	getAllTagsGQL,
+	getFilteredProjectsGQL,
 	getFilteredTagsGQL,
 	getProjectByIdCommentsGQL,
 	getProjectByIdGQL,
@@ -44,6 +47,15 @@ export async function getAllProjects() {
 	>(getAllProjectsGQL);
 
 	return allProject;
+}
+
+export async function getFilteredProjects(searchTerm: string) {
+	const { filterProject } = await graphqlClient.request<
+		FilterProjectsQuery,
+		FilterProjectsQueryVariables
+	>(getFilteredProjectsGQL, { searchTerm });
+
+	return filterProject;
 }
 
 export async function getProjectById(id: string | number) {

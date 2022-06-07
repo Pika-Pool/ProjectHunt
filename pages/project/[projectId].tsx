@@ -113,7 +113,9 @@ const Project: NextPage = () => {
 
 					<hr className='my-5 border-gray-300' />
 
-					<p>{description}</p>
+					<p>
+						{description?.split('').map(c => (/[\n\t]/.test(c) ? <br /> : c))}
+					</p>
 
 					<ProjectComment projectId={id!} />
 
