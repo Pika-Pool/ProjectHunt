@@ -2,14 +2,15 @@ import type { NextPage } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import toast from 'react-hot-toast';
-import { FaCaretUp } from 'react-icons/fa';
+import { FaCaretUp, FaEdit } from 'react-icons/fa';
 import { useQueries } from 'react-query';
 import Comment from '../../components/Comment';
 import CTAButton from '../../components/CTAButton';
 import LoadingOrComponent from '../../components/LoadingOrComponent';
 import ProjectComment from '../../components/ProjectComment';
-import ProjectLogo from '../../components/Projectlogo';
+import ProjectLogo from '../../components/ProjectLogo';
 import Tag from '../../components/Tag';
+import { useAuthUser } from '../../contexts/AuthUser';
 import useLoadingToast from '../../hooks/useLoadingToast';
 import {
 	getProjectById,
@@ -17,13 +18,15 @@ import {
 } from '../../lib/graphql/requests/query';
 
 const Project: NextPage = () => {
+	const { user } = useAuthUser();
+
 	const router = useRouter();
 	const { projectId } = router.query;
 
 	const projectQueryKey = ['getProjectById', projectId];
 	const projectCommentsQueryKey = ['getProjectByIdComments', projectId];
 	const [
-		{ data: project, isLoading: isProjectLoading },
+		{ data: project, isLoading: isProjectLoading, isFetched: isProjectFetched },
 		{ data: comments, isLoading: isCommentsLoading },
 	] = useQueries([
 		{
@@ -62,12 +65,22 @@ const Project: NextPage = () => {
 		return <h3>This project does not exist</h3>;
 
 	return (
-		<LoadingOrComponent isLoading={isProjectLoading}>
+		<LoadingOrComponent isLoading={isProjectLoading || !isProjectFetched}>
 			<div className='flex flex-col items-center mx-3'>
 				<div className='w-full max-w-4xl'>
-					<ProjectLogo
-						src={`https://ph-files.imgix.net/405a0dc6-7d86-4566-941f-6d12cfe1bc73.jpeg?auto=format&auto=compress&codec=mozjpeg&cs=strip&w=60&h=60&fit=crop&bg=0fff`}
-					/>
+					<div className='flex justify-between items-start'>
+						<ProjectLogo
+							src={`https://ph-files.imgix.net/405a0dc6-7d86-4566-941f-6d12cfe1bc73.jpeg?auto=format&auto=compress&codec=mozjpeg&cs=strip&w=60&h=60&fit=crop&bg=0fff`}
+						/>
+
+						{user.id?.toString() === projectOwner?.id ? (
+							<Link href={`/project/edit/${projectId}`}>
+								<a title='edit project'>
+									<FaEdit size='2em' className='text-gray-700 md:text-2xl' />
+								</a>
+							</Link>
+						) : null}
+					</div>
 
 					<div className='flex flex-wrap gap-4 items-baseline'>
 						<h1 className='text-xl font-bold mt-2'>{name}</h1>

@@ -2,7 +2,7 @@ import humanFormat from 'human-format';
 import { FaCaretUp, FaComment } from 'react-icons/fa';
 import timeAgo from '../lib/timeAgo';
 import type { GetAllProjectsQuery } from '../types/graphql';
-import ProjectLogo from './Projectlogo';
+import ProjectLogo from './ProjectLogo';
 import Tag from './Tag';
 
 export type ProjectCardProps = NonNullable<

@@ -1,5 +1,5 @@
 .authForm {
-	@apply max-w-lg mt-10 mx-5 p-5 flex flex-col gap-4 border-2 border-primary rounded;
+	@apply max-w-xl w-full mt-10 mx-5 p-5 flex flex-col gap-4 border-2 border-primary rounded;
 }
 
 .authForm__heading {

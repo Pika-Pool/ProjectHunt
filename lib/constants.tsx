@@ -8,5 +8,8 @@ export const ColorThemeStorageKey = 'colorTheme';
 export const ColorThemeOptions = ['OS', 'light', 'dark'];
 
 export const userAuthKeyLocalStorageKey = 'userData';
-export const projectSubmitFormDraftStorageKey = 'projectSubmitFormDraft';
+export const projectSubmitFormDraftStorageKey =
+	'projectSubmitFormDraftStorageKey';
+export const projectEditFormDraftStorageKey = (projectId: string | number) =>
+	`projectEditFormDraftStorageKey-${projectId}`;
 export const projectCommentDraftStorageKey = 'projectCommentDraftStorageKey';

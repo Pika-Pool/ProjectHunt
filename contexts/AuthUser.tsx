@@ -18,7 +18,7 @@ import {
 } from '../lib/localStorage';
 
 export interface User {
-	id?: number;
+	id?: number | string;
 	username?: string;
 	email?: string;
 	avatar?: string;

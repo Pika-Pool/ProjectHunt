@@ -1,4 +1,5 @@
 import { useRouter } from 'next/router';
+import type { FormEventHandler } from 'react';
 import { useMutation } from 'react-query';
 import { useAuthUser } from '../contexts/AuthUser';
 import useLocalStorage from '../hooks/useLocalStorage';
@@ -26,7 +27,8 @@ export default function ProjectComment({ projectId }: ProjectCommentProps) {
 		},
 	});
 
-	const onCommentSubmit = () => {
+	const onCommentSubmit: FormEventHandler<HTMLFormElement> = e => {
+		e.preventDefault();
 		if (!isUserLoggedIn) router.push('/auth/login');
 		else mutate({ comment, projectId });
 	};
@@ -39,14 +41,14 @@ export default function ProjectComment({ projectId }: ProjectCommentProps) {
 
 					<form
 						className='flex flex-col justify-between gap-2 w-full'
-						onChange={onCommentSubmit}
+						onSubmit={onCommentSubmit}
 					>
 						<textarea
 							name='comment'
 							id='comment'
 							className='w-full max-h-36 md:max-h-96 h-16 resize-none p-2 border-b border-primary'
 							placeholder="What's on your mind?"
-							required
+							required={isUserLoggedIn}
 							minLength={10}
 							value={comment}
 							onChange={e => {
