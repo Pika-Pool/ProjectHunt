@@ -9,5 +9,5 @@ export default function humanizeDate(date: Date): string {
 
 	if (givenDate === today) return 'Today';
 	if (givenDate === yesterday) return 'Yesterday';
-	return date.toLocaleDateString();
+	return date.toLocaleDateString(undefined, { month: 'short', day: '2-digit' });
 }

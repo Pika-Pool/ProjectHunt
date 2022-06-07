@@ -1,6 +1,7 @@
 import type { NextPage } from 'next';
 import toast from 'react-hot-toast';
 import { useQuery } from 'react-query';
+import LoadingOrComponent from '../components/LoadingOrComponent';
 import ProjectList from '../components/ProjectList';
 import useLoadingToast from '../hooks/useLoadingToast';
 import { getAllProjects } from '../lib/graphql/requests/query';
@@ -48,18 +49,9 @@ const HomePage: NextPage = () => {
 	return (
 		<div className='flex justify-center'>
 			<div className='flex justify-center max-w-6xl mx-2 md:mx-5 w-full'>
-				{isLoading ? (
-					<div className='flex items-center justify-center space-x-2 relative'>
-						<div
-							className='animate-spin inline-block w-40 h-40 border-primary border-l-transparent border-4 rounded-full'
-							role='status'
-						></div>
-
-						<span className='visible absolute'>Loading</span>
-					</div>
-				) : (
+				<LoadingOrComponent isLoading={isLoading}>
 					<ProjectList projects={projects ?? []} />
-				)}
+				</LoadingOrComponent>
 			</div>
 		</div>
 	);

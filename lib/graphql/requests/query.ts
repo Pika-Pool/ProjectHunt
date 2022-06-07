@@ -5,12 +5,18 @@ import type {
 	GetAllTagsQueryVariables,
 	GetFilteredTagsQuery,
 	GetFilteredTagsQueryVariables,
+	ProjectByIdCommentsQuery,
+	ProjectByIdCommentsQueryVariables,
+	ProjectByIdQuery,
+	ProjectByIdQueryVariables,
 } from '../../../types/graphql';
 import graphqlClient from '../../graphqlClient';
 import {
 	getAllProjectsGQL,
 	getAllTagsGQL,
 	getFilteredTagsGQL,
+	getProjectByIdCommentsGQL,
+	getProjectByIdGQL,
 } from '../documents/query';
 
 export async function getAllTags() {
@@ -38,4 +44,26 @@ export async function getAllProjects() {
 	>(getAllProjectsGQL);
 
 	return allProject;
+}
+
+export async function getProjectById(id: string | number) {
+	const { projectById } = await graphqlClient.request<
+		ProjectByIdQuery,
+		ProjectByIdQueryVariables
+	>(getProjectByIdGQL, {
+		id: id.toString(),
+	});
+
+	return projectById;
+}
+
+export async function getProjectByIdComments(id: string | number) {
+	const { projectById } = await graphqlClient.request<
+		ProjectByIdCommentsQuery,
+		ProjectByIdCommentsQueryVariables
+	>(getProjectByIdCommentsGQL, {
+		projectId: id.toString(),
+	});
+
+	return projectById?.comments ?? [];
 }

@@ -1,10 +1,11 @@
-import type { ButtonHTMLAttributes } from 'react';
+import classNames from 'classnames';
+import type { ButtonHTMLAttributes, PropsWithChildren } from 'react';
 import type { IconBaseProps } from 'react-icons';
 import { AiOutlineLoading } from 'react-icons/ai';
 
 export interface LoadingButtonProps
 	extends ButtonHTMLAttributes<HTMLButtonElement> {
-	text: string;
+	text?: string;
 	iconProps?: IconBaseProps;
 	isLoading?: boolean;
 }
@@ -14,12 +15,16 @@ export default function CTAButton({
 	text,
 	iconProps,
 	className,
+	children,
 	...buttonProps
-}: LoadingButtonProps) {
+}: PropsWithChildren<LoadingButtonProps>) {
 	return (
 		<button
 			disabled={isLoading}
-			className={`cursor-pointer w-full px-3 py-2 bg-primary text-white uppercase text-xl font-bold ${className}`}
+			className={classNames(
+				'cursor-pointer w-full px-3 py-2 bg-primary text-white uppercase text-xl font-bold',
+				className ?? '',
+			)}
 			{...buttonProps}
 		>
 			{isLoading ? (
@@ -31,7 +36,7 @@ export default function CTAButton({
 					Loading...
 				</div>
 			) : (
-				text
+				children || text
 			)}
 		</button>
 	);

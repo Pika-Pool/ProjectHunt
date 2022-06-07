@@ -2,6 +2,7 @@
 	/* all colors are in hsl */
 	/* --color-primary: hsl(118, 67%, 48%); */
 	--color-primary: 115 47% 48%;
+	--color-accent: 13 70% 52%;
 }
 
 @tailwind base;

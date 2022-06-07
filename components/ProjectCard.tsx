@@ -1,9 +1,9 @@
-import classNames from 'classnames';
 import humanFormat from 'human-format';
-import Image from 'next/image';
 import { FaCaretUp, FaComment } from 'react-icons/fa';
 import timeAgo from '../lib/timeAgo';
 import type { GetAllProjectsQuery } from '../types/graphql';
+import ProjectLogo from './Projectlogo';
+import Tag from './Tag';
 
 export type ProjectCardProps = NonNullable<
 	NonNullable<GetAllProjectsQuery['allProject']>[number]
@@ -13,22 +13,16 @@ export default function ProjectCard({
 	tag: tags,
 	comments,
 	name,
-	logo,
+	logo: logoURL,
 	postedAt,
 	upvote,
 	subtitle,
 }: ProjectCardProps) {
 	return (
 		<div className='grid grid-cols-[auto_1fr_auto] justify-between items-center gap-x-4 w-full text-sm sm:text-base rounded hover:cursor-pointer project_card'>
-			<div className='w-16 h-16 md:w-24 md:h-24 relative'>
-				<Image
-					src={`https://ph-files.imgix.net/405a0dc6-7d86-4566-941f-6d12cfe1bc73.jpeg?auto=format&auto=compress&codec=mozjpeg&cs=strip&w=60&h=60&fit=crop&bg=0fff`}
-					alt='carousel'
-					layout='fill'
-					objectFit='cover'
-					className='rounded'
-				/>
-			</div>
+			<ProjectLogo
+				src={`https://ph-files.imgix.net/405a0dc6-7d86-4566-941f-6d12cfe1bc73.jpeg?auto=format&auto=compress&codec=mozjpeg&cs=strip&w=60&h=60&fit=crop&bg=0fff`}
+			/>
 
 			<div className='flex flex-col justify-between w-full py-1 self-stretch'>
 				<div>
@@ -47,12 +41,7 @@ export default function ProjectCard({
 
 					<div className='ml-3 flex gap-2'>
 						{tags.slice(0, 5).map(({ tagName }) => (
-							<span
-								key={tagName}
-								className='py-1 px-2 hover:underline rounded bg-primary/50'
-							>
-								{tagName}
-							</span>
+							<Tag tagName={tagName} key={tagName} />
 						))}
 					</div>
 				</div>

@@ -21,3 +21,12 @@ export const createNewProjectGQL = gql`
 		}
 	}
 `;
+
+export const createNewCommentGQL = gql`
+	mutation createNewComment($projectId: ID!, $comment: String!) {
+		createComment(comment: $comment, id: $projectId) {
+			response
+			message
+		}
+	}
+`;

@@ -7,11 +7,12 @@ module.exports = {
 	theme: {
 		extend: {
 			fontFamily: {
-				sans: 'Poppins, sans-serif',
+				sans: 'Helvetica, Poppins, sans-serif',
 				serif: 'Lora, serif',
 			},
 			colors: {
 				primary: withOpacityValue('--color-primary'),
+				accent: withOpacityValue('--color-accent'),
 			},
 			animation: { 'spin-medium': 'spin 0.5s linear infinite' },
 			fontSize: { 'sm-em': ['0.875em', '1.25rem'] },

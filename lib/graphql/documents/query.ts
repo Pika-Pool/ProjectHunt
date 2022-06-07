@@ -36,3 +36,53 @@ export const getAllProjectsGQL = gql`
 		}
 	}
 `;
+
+export const getProjectByIdGQL = gql`
+	query projectById($id: ID!) {
+		projectById(id: $id) {
+			logo
+			id
+			logo
+			name
+			subtitle
+			postedAt
+			description
+			owner: ownerId {
+				id
+				username
+				avatar
+			}
+			upvote
+			tag {
+				tagName
+			}
+		}
+	}
+`;
+
+export const getProjectByIdCommentsGQL = gql`
+	query projectByIdComments($projectId: ID!) {
+		projectById(id: $projectId) {
+			comments {
+				id
+				comment
+				date
+				owner: ownerId {
+					id
+					username
+					avatar
+				}
+				replies {
+					id
+					reply
+					date
+					owner: ownerId {
+						id
+						username
+						avatar
+					}
+				}
+			}
+		}
+	}
+`;
