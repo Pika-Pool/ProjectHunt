@@ -3,11 +3,13 @@ import { gql } from 'graphql-request';
 export const projectsListGQLFrag = gql`
 	fragment projectsListGQLFrag on ProjectType {
 		id
-		logo
+		logo: logoUrl
 		name
 		subtitle
 		postedAt
-		upvote
+		url
+		votedByMe
+		upvote: voteCount
 		tag {
 			tagName
 		}

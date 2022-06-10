@@ -17,7 +17,17 @@ interface AppPropsWithLayout extends AppProps {
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const getLayout = Component.getLayout;
-	const [queryClient] = useState(() => new QueryClient());
+	const [queryClient] = useState(
+		() =>
+			new QueryClient({
+				defaultOptions: {
+					queries: {
+						refetchOnWindowFocus: false,
+						staleTime: 10 * 60 * 1000, // 10min
+					},
+				},
+			}),
+	);
 
 	return (
 		// Provide the client to your App

@@ -10,6 +10,7 @@ export default function ControlledMultiSelect({
 		<Controller
 			name={name}
 			control={control}
+			defaultValue={[]}
 			render={({ field: { value, onChange, onBlur } }) => (
 				<CreatableSelect
 					placeholder='Choose...'

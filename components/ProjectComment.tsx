@@ -5,6 +5,7 @@ import { useAuthUser } from '../contexts/AuthUser';
 import useLocalStorage from '../hooks/useLocalStorage';
 import { projectCommentDraftStorageKey } from '../lib/constants';
 import { createNewCommentReq } from '../lib/graphql/requests/mutation';
+import CommentBox from './CommentBox';
 import CTAButton from './CTAButton';
 import UserAvatar from './UserAvatar';
 
@@ -29,7 +30,11 @@ export default function ProjectComment({ projectId }: ProjectCommentProps) {
 
 	const onCommentSubmit: FormEventHandler<HTMLFormElement> = e => {
 		e.preventDefault();
-		if (!isUserLoggedIn) router.push('/auth/login');
+		if (!isUserLoggedIn)
+			router.push({
+				pathname: '/auth/login',
+				query: { from: `/project/${projectId}` },
+			});
 		else mutate({ comment, projectId });
 	};
 
@@ -43,26 +48,18 @@ export default function ProjectComment({ projectId }: ProjectCommentProps) {
 						className='flex flex-col justify-between gap-2 w-full'
 						onSubmit={onCommentSubmit}
 					>
-						<textarea
-							name='comment'
-							id='comment'
-							className='w-full max-h-36 md:max-h-96 h-16 resize-none p-2 border-b border-primary'
-							placeholder="What's on your mind?"
-							required={isUserLoggedIn}
-							minLength={10}
+						<CommentBox
 							value={comment}
-							onChange={e => {
-								e.target.style.height = '4rem';
-								e.target.style.height = e.target.scrollHeight + 'px';
-								setComment(e.target.value);
-							}}
-						></textarea>
+							onChange={e => setComment(e.target.value)}
+							required={isUserLoggedIn}
+						/>
 
 						<CTAButton
 							text={isUserLoggedIn ? 'Comment' : 'Login to Comment'}
 							type='submit'
 							isLoading={isLoading}
 							className='self-end w-max capitalize rounded text-base px-4'
+							style={{ fontSize: '1rem', lineHeight: '1.5rem' }}
 						/>
 					</form>
 				</div>

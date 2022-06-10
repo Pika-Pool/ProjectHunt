@@ -1,7 +1,7 @@
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-import { FormProvider, useForm, type SubmitHandler } from 'react-hook-form';
+import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { useMutation, useQuery } from 'react-query';
 import ClientOnly from '../../../components/ClientOnly';
@@ -11,14 +11,20 @@ import ProjectForm, {
 } from '../../../components/ProjectForm';
 import { useAuthUser } from '../../../contexts/AuthUser';
 import useLoadingToast from '../../../hooks/useLoadingToast';
-import { createNewProjectReq } from '../../../lib/graphql/requests/mutation';
+import { editProjectReq } from '../../../lib/graphql/requests/mutation';
 import { getProjectById } from '../../../lib/graphql/requests/query';
+import { isBrowserFile } from '../../../lib/typeGuards/FileAndFileList';
+import type { EditProjectMutationVariables } from '../../../types/graphql';
 
 const EditProject: NextPage = () => {
-	const { isLoggedIn: isUserLoggedIn, user } = useAuthUser();
-
 	const router = useRouter();
 	const { projectId } = router.query;
+
+	const { isLoggedIn: isUserLoggedIn, user } = useAuthUser();
+	// user needs to be signed in to be authorised to edit projects
+	useEffect(() => {
+		if (!isUserLoggedIn) router.push('/auth/login');
+	}, [isUserLoggedIn, router]);
 
 	const useFormReturn = useForm<ProjectFormValues>({
 		shouldUseNativeValidation: true,
@@ -38,15 +44,31 @@ const EditProject: NextPage = () => {
 				toast.error('Unable to fetch the project. Try again later');
 			},
 			onSuccess(data) {
-				if (data) useFormReturn.reset(data);
-				else toast.error('Could not fetch the project data. Try again later');
+				if (!data)
+					toast.error('Could not fetch the project data. Try again later');
 			},
 		},
 	);
 
+	useEffect(() => {
+		const screenshots =
+			project?.screenshots?.map(({ src }) => src ?? '').filter(Boolean) ?? [];
+		const { description, name, subtitle, tag: tags, url } = project || {};
+
+		useFormReturn.reset({
+			description,
+			name,
+			subtitle,
+			tags: tags?.map(({ tagName }) => tagName),
+			url,
+			logo: undefined,
+			screenshots: screenshots,
+		});
+	}, [project, useFormReturn]);
+
 	// mutation query to create project
 	const { mutate, isLoading: isLoadingFormSubmit } = useMutation(
-		createNewProjectReq,
+		editProjectReq,
 		{ onSuccess: data => router.push(`/project/${data.projectId}`) },
 	);
 	useLoadingToast({
@@ -54,12 +76,24 @@ const EditProject: NextPage = () => {
 		toastMsg: 'Registering your project...',
 	});
 
-	const onFormSubmit: SubmitHandler<ProjectFormValues> = data => mutate(data);
+	const onFormSubmit: SubmitHandler<ProjectFormValues> = data => {
+		// transform form data to be compatible with format to send
+		const dataToSend: EditProjectMutationVariables = {
+			...data,
 
-	// user needs to be signed in to be authorised to edit projects
-	useEffect(() => {
-		if (!isUserLoggedIn) router.push('/auth/login');
-	}, [isUserLoggedIn, router]);
+			deleteScreenshot:
+				project?.screenshots
+					.filter(({ src }) => !data.screenshots.includes(src ?? ''))
+					.map(({ src }) => src!) ?? [],
+
+			screenshots: data.screenshots.filter(screenshot =>
+				isBrowserFile(screenshot),
+			) as File[],
+			id: project?.id ?? '',
+		};
+
+		mutate(dataToSend);
+	};
 
 	if (isUserLoggedIn && isProjectFetched && !project) {
 		toast.error('Could not load this project');
@@ -83,6 +117,7 @@ const EditProject: NextPage = () => {
 						isFormLoading={isLoadingFormSubmit}
 						onFormSubmit={onFormSubmit}
 						isAddingNewProject={false}
+						currentProject={project}
 					/>
 				</ClientOnly>
 			</FormProvider>

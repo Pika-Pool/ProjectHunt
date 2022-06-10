@@ -49,7 +49,8 @@ const Submit: NextPage = () => {
 	// redirect to /login if user is not logged in
 	// form data is saved in localStorage
 	const onFormSubmit: SubmitHandler<ProjectFormValues> = data => {
-		if (!isUserLoggedIn) router.push('/auth/login');
+		if (!isUserLoggedIn)
+			router.push({ pathname: '/auth/login', query: { from: '/submit' } });
 		else mutate(data);
 	};
 

@@ -1,6 +1,7 @@
 import type { Control } from 'react-hook-form';
 import { useQuery } from 'react-query';
 import { getAllTags } from '../lib/graphql/requests/query';
+import styles from '../styles/authForm.module.css';
 import ClientOnly from './ClientOnly';
 import ControlledMultiSelect from './ControlledMultiSelect';
 
@@ -13,11 +14,14 @@ export default function TagsSelect<T>({ control }: TagsSelectProps<T>) {
 	const { data: tags, isLoading: isTagsLoading } = useQuery(
 		'allTags',
 		getAllTags,
+		{ staleTime: 5 * 60 * 1000 },
 	);
 
 	return (
 		<>
-			<label htmlFor='tags'>Tags</label>
+			<label htmlFor='tags' className={styles.authForm__label}>
+				Tags
+			</label>
 			<ClientOnly>
 				<ControlledMultiSelect
 					control={control}

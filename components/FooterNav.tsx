@@ -1,10 +1,4 @@
-import {
-	FaChartLine,
-	FaHome,
-	FaPenAlt,
-	FaSearch,
-	FaUserAstronaut,
-} from 'react-icons/fa';
+import { FaHome, FaPenAlt, FaSearch, FaUserAstronaut } from 'react-icons/fa';
 import NavLink from './NavLink';
 
 export default function FooterNav() {
@@ -23,15 +17,6 @@ export default function FooterNav() {
 						<>
 							<FaHome size='2em' />
 							<span>Home</span>
-						</>
-					}
-				/>
-				<NavLink
-					href='/trending'
-					content={
-						<>
-							<FaChartLine size='2em' />
-							<span>Trending</span>
 						</>
 					}
 				/>

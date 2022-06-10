@@ -7,6 +7,10 @@ import type {
 	GetAllTagsQueryVariables,
 	GetFilteredTagsQuery,
 	GetFilteredTagsQueryVariables,
+	GetProjectByUserQuery,
+	GetProjectByUserQueryVariables,
+	GetUserProfileQuery,
+	GetUserProfileQueryVariables,
 	ProjectByIdCommentsQuery,
 	ProjectByIdCommentsQueryVariables,
 	ProjectByIdQuery,
@@ -20,7 +24,20 @@ import {
 	getFilteredTagsGQL,
 	getProjectByIdCommentsGQL,
 	getProjectByIdGQL,
+	getProjectsByUserGQL,
+	getUserProfileGQL,
 } from '../documents/query';
+
+export async function getUserProfile(userId?: string | number) {
+	const { getProfile } = await graphqlClient.request<
+		GetUserProfileQuery,
+		GetUserProfileQueryVariables
+	>(getUserProfileGQL, {
+		userId: parseInt(userId?.toString() ?? '', 10) || undefined,
+	});
+
+	return getProfile;
+}
 
 export async function getAllTags() {
 	const { allTag } = await graphqlClient.request<
@@ -78,4 +95,13 @@ export async function getProjectByIdComments(id: string | number) {
 	});
 
 	return projectById?.comments ?? [];
+}
+
+export async function getProjectsByUser(userId?: string | number) {
+	const { projectByUserid } = await graphqlClient.request<
+		GetProjectByUserQuery,
+		GetProjectByUserQueryVariables
+	>(getProjectsByUserGQL, { userId: userId?.toString() });
+
+	return projectByUserid;
 }

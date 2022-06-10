@@ -18,7 +18,10 @@ const Login: NextPageWithLayout = () => {
 	const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		const formData = new FormData(e.target as HTMLFormElement);
-		return defaultAuthRequest('/accounts/login/', formData);
+
+		const data: any = {};
+		formData.forEach((value, key) => (data[key] = value));
+		return defaultAuthRequest('/accounts/login/', data);
 	};
 
 	const { isLoading, mutate } = useMutation(handleSubmit, {
@@ -34,7 +37,7 @@ const Login: NextPageWithLayout = () => {
 	});
 
 	useLoadingToast({ isLoading });
-	useRedirectOnLoggedIn();
+	const { from } = useRedirectOnLoggedIn();
 
 	return (
 		<form className={styles.authForm} onSubmit={mutate}>
@@ -45,7 +48,7 @@ const Login: NextPageWithLayout = () => {
 
 				<div>
 					Don&lsquo;t have an account?{' '}
-					<Link href='/auth/register'>
+					<Link href={{ pathname: '/auth/register', query: { from } }}>
 						<a className='text-blue-500'>Create account</a>
 					</Link>
 				</div>

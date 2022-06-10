@@ -13,7 +13,10 @@ const ForgotPassword: NextPageWithLayout = () => {
 	const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		const formData = new FormData(e.target as HTMLFormElement);
-		return defaultAuthRequest('/accounts/password/reset/', formData);
+
+		const data: any = {};
+		formData.forEach((value, key) => (data[key] = value));
+		return defaultAuthRequest('/accounts/login/', data);
 	};
 
 	const { isLoading, mutate } = useMutation(handleSubmit, {

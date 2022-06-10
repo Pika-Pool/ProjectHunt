@@ -10,7 +10,7 @@ export const defaultAuthRequest = async (
 	let body: FormData | string;
 
 	if (data instanceof FormData) {
-		headers['Content-Type'] = 'application/x-www-form-urlencoded';
+		headers['Content-Type'] = 'multipart/form-data';
 		body = data;
 	} else {
 		body = JSON.stringify(data);

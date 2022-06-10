@@ -13,7 +13,7 @@ export default function AuthLayout({
 	return (
 		<>
 			<Header withBackBtn title={headerTitle} />
-			<main className='flex flex-col items-center'>{children}</main>
+			<main className='flex flex-col items-center px-3'>{children}</main>
 			<FooterNav />
 		</>
 	);

@@ -22,26 +22,31 @@ export type Scalars = {
 	 * [iso8601](https://en.wikipedia.org/wiki/ISO_8601).
 	 */
 	DateTime: any;
+	/**
+	 * Create scalar that ignores normal serialization/deserialization, since
+	 * that will be handled by the multipart request spec
+	 */
+	Upload: any;
 };
 
 export type CommentCreateMutation = {
 	__typename?: 'CommentCreateMutation';
 	commentInstance?: Maybe<CommentType>;
+	error?: Maybe<Scalars['Boolean']>;
 	message?: Maybe<Scalars['String']>;
-	response?: Maybe<Scalars['Boolean']>;
 };
 
 export type CommentDeleteMutation = {
 	__typename?: 'CommentDeleteMutation';
+	error?: Maybe<Scalars['Boolean']>;
 	message?: Maybe<Scalars['String']>;
-	response?: Maybe<Scalars['Boolean']>;
 };
 
 export type CommentType = {
 	__typename?: 'CommentType';
 	comment: Scalars['String'];
-	date: Scalars['DateTime'];
 	id: Scalars['ID'];
+	lastModify: Scalars['DateTime'];
 	ownerId: ProfileType;
 	projectId: ProjectType;
 	replies: Array<ReplyType>;
@@ -50,8 +55,8 @@ export type CommentType = {
 export type CommentUpdateMutation = {
 	__typename?: 'CommentUpdateMutation';
 	commentInstance?: Maybe<CommentType>;
+	error?: Maybe<Scalars['Boolean']>;
 	message?: Maybe<Scalars['String']>;
-	response?: Maybe<Scalars['Boolean']>;
 };
 
 export type Mutation = {
@@ -62,11 +67,11 @@ export type Mutation = {
 	deleteComment?: Maybe<CommentDeleteMutation>;
 	deleteProject?: Maybe<ProjectDeleteMutation>;
 	deleteReply?: Maybe<ReplyDeleteMutation>;
-	deleteScreenshot?: Maybe<ScreenshotDeleteMutation>;
 	updateComment?: Maybe<CommentUpdateMutation>;
 	updateProfile?: Maybe<UpdateProfile>;
 	updateProject?: Maybe<ProjectUpdateMutation>;
 	updateReply?: Maybe<ReplyUpdateMutation>;
+	upvoteProject?: Maybe<UpvoteProject>;
 };
 
 export type MutationCreateCommentArgs = {
@@ -76,7 +81,9 @@ export type MutationCreateCommentArgs = {
 
 export type MutationCreateProjectArgs = {
 	description: Scalars['String'];
+	logos?: InputMaybe<Array<InputMaybe<Scalars['Upload']>>>;
 	name: Scalars['String'];
+	screenshots?: InputMaybe<Array<InputMaybe<Scalars['Upload']>>>;
 	subtitle: Scalars['String'];
 	tags: Array<InputMaybe<Scalars['String']>>;
 };
@@ -98,28 +105,26 @@ export type MutationDeleteReplyArgs = {
 	id?: InputMaybe<Scalars['ID']>;
 };
 
-export type MutationDeleteScreenshotArgs = {
-	id?: InputMaybe<Scalars['ID']>;
-};
-
 export type MutationUpdateCommentArgs = {
 	comment: Scalars['String'];
 	id?: InputMaybe<Scalars['ID']>;
 };
 
 export type MutationUpdateProfileArgs = {
-	email?: InputMaybe<Scalars['String']>;
-	firstName?: InputMaybe<Scalars['String']>;
-	id: Scalars['ID'];
-	lastName?: InputMaybe<Scalars['String']>;
-	username?: InputMaybe<Scalars['String']>;
+	avatars?: InputMaybe<Array<InputMaybe<Scalars['Upload']>>>;
+	email: Scalars['String'];
+	username: Scalars['String'];
 };
 
 export type MutationUpdateProjectArgs = {
+	deleteScreenshot?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
 	description?: InputMaybe<Scalars['String']>;
-	id?: InputMaybe<Scalars['ID']>;
+	id: Scalars['ID'];
+	logos?: InputMaybe<Array<InputMaybe<Scalars['Upload']>>>;
 	name?: InputMaybe<Scalars['String']>;
+	screenshots?: InputMaybe<Array<InputMaybe<Scalars['Upload']>>>;
 	subtitle?: InputMaybe<Scalars['String']>;
+	tags: Array<InputMaybe<Scalars['String']>>;
 };
 
 export type MutationUpdateReplyArgs = {
@@ -127,9 +132,15 @@ export type MutationUpdateReplyArgs = {
 	reply: Scalars['String'];
 };
 
+export type MutationUpvoteProjectArgs = {
+	id: Scalars['ID'];
+	shouldRemoveVote?: InputMaybe<Scalars['Boolean']>;
+};
+
 export type ProfileType = {
 	__typename?: 'ProfileType';
 	avatar: Scalars['String'];
+	avatarUrl?: Maybe<Scalars['String']>;
 	email: Scalars['String'];
 	firstName: Scalars['String'];
 	id: Scalars['ID'];
@@ -140,15 +151,16 @@ export type ProfileType = {
 
 export type ProjectCreateMutation = {
 	__typename?: 'ProjectCreateMutation';
+	error?: Maybe<Scalars['Boolean']>;
 	message?: Maybe<Scalars['String']>;
 	projectInstance?: Maybe<ProjectType>;
-	response?: Maybe<Scalars['Boolean']>;
+	screenshotInstances?: Maybe<Array<Maybe<ScreenshotType>>>;
 };
 
 export type ProjectDeleteMutation = {
 	__typename?: 'ProjectDeleteMutation';
+	error?: Maybe<Scalars['Boolean']>;
 	message?: Maybe<Scalars['String']>;
-	response?: Maybe<Scalars['Boolean']>;
 };
 
 export type ProjectType = {
@@ -156,21 +168,27 @@ export type ProjectType = {
 	comments: Array<CommentType>;
 	description: Scalars['String'];
 	id: Scalars['ID'];
+	lastModify: Scalars['DateTime'];
 	logo: Scalars['String'];
+	logoUrl?: Maybe<Scalars['String']>;
 	name: Scalars['String'];
 	ownerId: ProfileType;
 	postedAt: Scalars['DateTime'];
 	screenshots: Array<ScreenshotType>;
 	subtitle: Scalars['String'];
 	tag: Array<TagType>;
-	upvote: Scalars['Int'];
+	url: Scalars['String'];
+	voteCount?: Maybe<Scalars['Int']>;
+	votedBy: Array<ProfileType>;
+	votedByMe?: Maybe<Scalars['Boolean']>;
 };
 
 export type ProjectUpdateMutation = {
 	__typename?: 'ProjectUpdateMutation';
+	error?: Maybe<Scalars['Boolean']>;
 	message?: Maybe<Scalars['String']>;
 	projectInstance?: Maybe<ProjectType>;
-	response?: Maybe<Scalars['Boolean']>;
+	screenshotInstances?: Maybe<Array<Maybe<ScreenshotType>>>;
 };
 
 export type Query = {
@@ -179,66 +197,63 @@ export type Query = {
 	allTag?: Maybe<Array<Maybe<TagType>>>;
 	filterProject?: Maybe<Array<Maybe<ProjectType>>>;
 	filterTag?: Maybe<Array<Maybe<TagType>>>;
-	message?: Maybe<Scalars['String']>;
-	profile?: Maybe<ProfileType>;
+	getProfile?: Maybe<ProfileType>;
 	projectById?: Maybe<ProjectType>;
 	projectByTagid?: Maybe<TagType>;
-	status?: Maybe<Scalars['Int']>;
+	projectByUserid?: Maybe<Array<Maybe<ProjectType>>>;
 };
 
 export type QueryFilterProjectArgs = {
-	textToSearch?: InputMaybe<Scalars['String']>;
+	textToSearch: Scalars['String'];
 };
 
 export type QueryFilterTagArgs = {
-	tagName?: InputMaybe<Scalars['String']>;
+	tagName: Scalars['String'];
 };
 
-export type QueryProfileArgs = {
-	id: Scalars['ID'];
+export type QueryGetProfileArgs = {
+	id?: InputMaybe<Scalars['Int']>;
 };
 
 export type QueryProjectByIdArgs = {
-	id?: InputMaybe<Scalars['ID']>;
+	id: Scalars['ID'];
 };
 
 export type QueryProjectByTagidArgs = {
+	id: Scalars['ID'];
+};
+
+export type QueryProjectByUseridArgs = {
 	id?: InputMaybe<Scalars['ID']>;
 };
 
 export type ReplyCreateMutation = {
 	__typename?: 'ReplyCreateMutation';
+	error?: Maybe<Scalars['Boolean']>;
 	message?: Maybe<Scalars['String']>;
 	replyInstance?: Maybe<ReplyType>;
-	response?: Maybe<Scalars['Boolean']>;
 };
 
 export type ReplyDeleteMutation = {
 	__typename?: 'ReplyDeleteMutation';
+	error?: Maybe<Scalars['Boolean']>;
 	message?: Maybe<Scalars['String']>;
-	response?: Maybe<Scalars['Boolean']>;
 };
 
 export type ReplyType = {
 	__typename?: 'ReplyType';
 	commentId: CommentType;
-	date: Scalars['DateTime'];
 	id: Scalars['ID'];
+	lastModify: Scalars['DateTime'];
 	ownerId: ProfileType;
 	reply: Scalars['String'];
 };
 
 export type ReplyUpdateMutation = {
 	__typename?: 'ReplyUpdateMutation';
+	error?: Maybe<Scalars['Boolean']>;
 	message?: Maybe<Scalars['String']>;
 	replyInstance?: Maybe<ReplyType>;
-	response?: Maybe<Scalars['Boolean']>;
-};
-
-export type ScreenshotDeleteMutation = {
-	__typename?: 'ScreenshotDeleteMutation';
-	message?: Maybe<Scalars['String']>;
-	response?: Maybe<Scalars['Boolean']>;
 };
 
 export type ScreenshotType = {
@@ -246,6 +261,7 @@ export type ScreenshotType = {
 	id: Scalars['ID'];
 	image: Scalars['String'];
 	projectId: ProjectType;
+	screenshotUrl?: Maybe<Scalars['String']>;
 };
 
 export type TagType = {
@@ -257,19 +273,29 @@ export type TagType = {
 
 export type UpdateProfile = {
 	__typename?: 'UpdateProfile';
-	msg?: Maybe<Scalars['String']>;
+	error?: Maybe<Scalars['Boolean']>;
+	message?: Maybe<Scalars['String']>;
 	profile?: Maybe<ProfileType>;
-	status?: Maybe<Scalars['Int']>;
+};
+
+export type UpvoteProject = {
+	__typename?: 'UpvoteProject';
+	error?: Maybe<Scalars['Boolean']>;
+	message?: Maybe<Scalars['String']>;
+	projectInstance?: Maybe<ProjectType>;
+	votedByMe?: Maybe<Scalars['Boolean']>;
 };
 
 export type ProjectsListGqlFragFragment = {
 	__typename?: 'ProjectType';
 	id: string;
-	logo: string;
 	name: string;
 	subtitle: string;
 	postedAt: any;
-	upvote: number;
+	url: string;
+	votedByMe?: boolean | null;
+	logo?: string | null;
+	upvote?: number | null;
 	tag: Array<{ __typename?: 'TagType'; tagName: string }>;
 	comments: Array<{ __typename?: 'CommentType'; id: string }>;
 };
@@ -279,13 +305,35 @@ export type CreateNewProjectMutationVariables = Exact<{
 	name: Scalars['String'];
 	subtitle: Scalars['String'];
 	tags: Array<Scalars['String']> | Scalars['String'];
+	logo: Array<Scalars['Upload']> | Scalars['Upload'];
 }>;
 
 export type CreateNewProjectMutation = {
 	__typename?: 'Mutation';
 	createProject?: {
 		__typename?: 'ProjectCreateMutation';
-		response?: boolean | null;
+		error?: boolean | null;
+		message?: string | null;
+		projectInstance?: { __typename?: 'ProjectType'; id: string } | null;
+	} | null;
+};
+
+export type EditProjectMutationVariables = Exact<{
+	deleteScreenshot?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
+	description?: InputMaybe<Scalars['String']>;
+	id: Scalars['ID'];
+	logo?: InputMaybe<Array<Scalars['Upload']> | Scalars['Upload']>;
+	name?: InputMaybe<Scalars['String']>;
+	screenshots?: InputMaybe<Array<Scalars['Upload']> | Scalars['Upload']>;
+	subtitle?: InputMaybe<Scalars['String']>;
+	tags: Array<InputMaybe<Scalars['String']>> | InputMaybe<Scalars['String']>;
+}>;
+
+export type EditProjectMutation = {
+	__typename?: 'Mutation';
+	updateProject?: {
+		__typename?: 'ProjectUpdateMutation';
+		error?: boolean | null;
 		message?: string | null;
 		projectInstance?: { __typename?: 'ProjectType'; id: string } | null;
 	} | null;
@@ -300,8 +348,95 @@ export type CreateNewCommentMutation = {
 	__typename?: 'Mutation';
 	createComment?: {
 		__typename?: 'CommentCreateMutation';
-		response?: boolean | null;
+		error?: boolean | null;
 		message?: string | null;
+	} | null;
+};
+
+export type EditCommentMutationVariables = Exact<{
+	comment: Scalars['String'];
+	commentId: Scalars['ID'];
+}>;
+
+export type EditCommentMutation = {
+	__typename?: 'Mutation';
+	updateComment?: {
+		__typename?: 'CommentUpdateMutation';
+		message?: string | null;
+		error?: boolean | null;
+		commentInstance?: { __typename?: 'CommentType'; comment: string } | null;
+	} | null;
+};
+
+export type UpdateProfileMutationVariables = Exact<{
+	avatars?: InputMaybe<
+		Array<InputMaybe<Scalars['Upload']>> | InputMaybe<Scalars['Upload']>
+	>;
+	email: Scalars['String'];
+	username: Scalars['String'];
+}>;
+
+export type UpdateProfileMutation = {
+	__typename?: 'Mutation';
+	updateProfile?: {
+		__typename?: 'UpdateProfile';
+		error?: boolean | null;
+		message?: string | null;
+		profile?: {
+			__typename?: 'ProfileType';
+			id: string;
+			username: string;
+			email: string;
+			avatar: string;
+		} | null;
+	} | null;
+};
+
+export type DeleteCommentMutationVariables = Exact<{
+	commentId: Scalars['ID'];
+}>;
+
+export type DeleteCommentMutation = {
+	__typename?: 'Mutation';
+	deleteComment?: {
+		__typename?: 'CommentDeleteMutation';
+		error?: boolean | null;
+		message?: string | null;
+	} | null;
+};
+
+export type VoteOnProjectMutationVariables = Exact<{
+	projectId: Scalars['ID'];
+	shouldRemoveVote?: InputMaybe<Scalars['Boolean']>;
+}>;
+
+export type VoteOnProjectMutation = {
+	__typename?: 'Mutation';
+	upvoteProject?: {
+		__typename?: 'UpvoteProject';
+		error?: boolean | null;
+		message?: string | null;
+		projectInstance?: {
+			__typename?: 'ProjectType';
+			id: string;
+			votedByMe?: boolean | null;
+			upvote?: number | null;
+		} | null;
+	} | null;
+};
+
+export type GetUserProfileQueryVariables = Exact<{
+	userId?: InputMaybe<Scalars['Int']>;
+}>;
+
+export type GetUserProfileQuery = {
+	__typename?: 'Query';
+	getProfile?: {
+		__typename?: 'ProfileType';
+		id: string;
+		username: string;
+		email: string;
+		avatar?: string | null;
 	} | null;
 };
 
@@ -336,11 +471,13 @@ export type GetAllProjectsQuery = {
 	allProject?: Array<{
 		__typename?: 'ProjectType';
 		id: string;
-		logo: string;
 		name: string;
 		subtitle: string;
 		postedAt: any;
-		upvote: number;
+		url: string;
+		votedByMe?: boolean | null;
+		logo?: string | null;
+		upvote?: number | null;
 		tag: Array<{ __typename?: 'TagType'; tagName: string }>;
 		comments: Array<{ __typename?: 'CommentType'; id: string }>;
 	} | null> | null;
@@ -355,11 +492,13 @@ export type FilterProjectsQuery = {
 	filterProject?: Array<{
 		__typename?: 'ProjectType';
 		id: string;
-		logo: string;
 		name: string;
 		subtitle: string;
 		postedAt: any;
-		upvote: number;
+		url: string;
+		votedByMe?: boolean | null;
+		logo?: string | null;
+		upvote?: number | null;
 		tag: Array<{ __typename?: 'TagType'; tagName: string }>;
 		comments: Array<{ __typename?: 'CommentType'; id: string }>;
 	} | null> | null;
@@ -373,20 +512,27 @@ export type ProjectByIdQuery = {
 	__typename?: 'Query';
 	projectById?: {
 		__typename?: 'ProjectType';
-		logo: string;
 		id: string;
 		name: string;
 		subtitle: string;
 		postedAt: any;
+		url: string;
+		votedByMe?: boolean | null;
 		description: string;
-		upvote: number;
+		logo?: string | null;
+		upvote?: number | null;
+		tag: Array<{ __typename?: 'TagType'; tagName: string }>;
+		screenshots: Array<{
+			__typename?: 'ScreenshotType';
+			id: string;
+			src?: string | null;
+		}>;
 		owner: {
 			__typename?: 'ProfileType';
 			id: string;
 			username: string;
-			avatar: string;
+			avatar?: string | null;
 		};
-		tag: Array<{ __typename?: 'TagType'; tagName: string }>;
 	} | null;
 };
 
@@ -407,7 +553,7 @@ export type ProjectByIdCommentsQuery = {
 				__typename?: 'ProfileType';
 				id: string;
 				username: string;
-				avatar: string;
+				avatar?: string | null;
 			};
 			replies: Array<{
 				__typename?: 'ReplyType';
@@ -418,9 +564,30 @@ export type ProjectByIdCommentsQuery = {
 					__typename?: 'ProfileType';
 					id: string;
 					username: string;
-					avatar: string;
+					avatar?: string | null;
 				};
 			}>;
 		}>;
 	} | null;
+};
+
+export type GetProjectByUserQueryVariables = Exact<{
+	userId?: InputMaybe<Scalars['ID']>;
+}>;
+
+export type GetProjectByUserQuery = {
+	__typename?: 'Query';
+	projectByUserid?: Array<{
+		__typename?: 'ProjectType';
+		id: string;
+		name: string;
+		subtitle: string;
+		postedAt: any;
+		url: string;
+		votedByMe?: boolean | null;
+		logo?: string | null;
+		upvote?: number | null;
+		tag: Array<{ __typename?: 'TagType'; tagName: string }>;
+		comments: Array<{ __typename?: 'CommentType'; id: string }>;
+	} | null> | null;
 };

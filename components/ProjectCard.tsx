@@ -1,5 +1,6 @@
 import humanFormat from 'human-format';
 import { FaCaretUp, FaComment } from 'react-icons/fa';
+import useUpvoteMutation from '../hooks/useUpvoteMutation';
 import timeAgo from '../lib/timeAgo';
 import type { GetAllProjectsQuery } from '../types/graphql';
 import ProjectLogo from './ProjectLogo';
@@ -17,12 +18,20 @@ export default function ProjectCard({
 	postedAt,
 	upvote,
 	subtitle,
+	votedByMe,
+	id: projectId,
 }: ProjectCardProps) {
+	const { onUpvote, isUpvoteLoading } = useUpvoteMutation({
+		projectId,
+		projectVotedByMe: !!votedByMe,
+	});
+
 	return (
-		<div className='grid grid-cols-[auto_1fr_auto] justify-between items-center gap-x-4 w-full text-sm sm:text-base rounded hover:cursor-pointer project_card'>
-			<ProjectLogo
-				src={`https://ph-files.imgix.net/405a0dc6-7d86-4566-941f-6d12cfe1bc73.jpeg?auto=format&auto=compress&codec=mozjpeg&cs=strip&w=60&h=60&fit=crop&bg=0fff`}
-			/>
+		<div
+			className='grid grid-cols-[auto_1fr_auto] justify-between items-center gap-x-4 w-full text-sm sm:text-base rounded hover:cursor-pointer project_card'
+			data-project-id={projectId}
+		>
+			<ProjectLogo src={logoURL ?? ''} />
 
 			<div className='flex flex-col justify-between w-full py-1 self-stretch'>
 				<div>
@@ -47,12 +56,20 @@ export default function ProjectCard({
 				</div>
 			</div>
 
-			<div className='m-2 border border-current hover:border-primary rounded flex flex-col justify-around items-center p-2 h-max'>
-				<FaCaretUp className='text-lg md:text-3xl' />
+			<button
+				className='m-2 border border-current hover:border-primary rounded flex flex-col justify-around items-center p-2 h-max'
+				style={votedByMe ? { borderColor: 'hsl(var(--color-primary))' } : {}}
+				onClick={onUpvote}
+				disabled={isUpvoteLoading}
+			>
+				<FaCaretUp
+					className='text-lg md:text-3xl'
+					style={votedByMe ? { color: 'hsl(var(--color-primary))' } : {}}
+				/>
 				<span className='text-xs sm:text-sm'>
 					{humanFormat(upvote, { maxDecimals: 1, separator: '' })}
 				</span>
-			</div>
+			</button>
 
 			<style jsx>{`
 				.project_card:hover {

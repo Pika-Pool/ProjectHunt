@@ -1,6 +1,17 @@
 import { gql } from 'graphql-request';
 import { projectsListGQLFrag } from './fragments';
 
+export const getUserProfileGQL = gql`
+	query getUserProfile($userId: Int) {
+		getProfile(id: $userId) {
+			id
+			username
+			avatar: avatarUrl
+			email
+		}
+	}
+`;
+
 export const getAllTagsGQL = gql`
 	query getAllTags {
 		allTag {
@@ -40,21 +51,27 @@ export const getFilteredProjectsGQL = gql`
 export const getProjectByIdGQL = gql`
 	query projectById($id: ID!) {
 		projectById(id: $id) {
-			logo
 			id
-			logo
+			logo: logoUrl
 			name
 			subtitle
 			postedAt
+			url
+			votedByMe
+			upvote: voteCount
+			tag {
+				tagName
+			}
+
 			description
+			screenshots {
+				id
+				src: screenshotUrl
+			}
 			owner: ownerId {
 				id
 				username
-				avatar
-			}
-			upvote
-			tag {
-				tagName
+				avatar: avatarUrl
 			}
 		}
 	}
@@ -66,23 +83,32 @@ export const getProjectByIdCommentsGQL = gql`
 			comments {
 				id
 				comment
-				date
+				date: lastModify
 				owner: ownerId {
 					id
 					username
-					avatar
+					avatar: avatarUrl
 				}
 				replies {
 					id
 					reply
-					date
+					date: lastModify
 					owner: ownerId {
 						id
 						username
-						avatar
+						avatar: avatarUrl
 					}
 				}
 			}
+		}
+	}
+`;
+
+export const getProjectsByUserGQL = gql`
+	${projectsListGQLFrag}
+	query getProjectByUser($userId: ID) {
+		projectByUserid(id: $userId) {
+			...projectsListGQLFrag
 		}
 	}
 `;

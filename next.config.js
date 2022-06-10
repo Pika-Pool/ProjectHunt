@@ -50,7 +50,7 @@ const nextConfig = {
 	},
 
 	images: {
-		domains: ['ph-files.imgix.net'],
+		domains: ['ph-files.imgix.net', 'localhost'],
 	},
 };
 

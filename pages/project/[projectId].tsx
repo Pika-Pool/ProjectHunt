@@ -2,16 +2,23 @@ import type { NextPage } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import toast from 'react-hot-toast';
-import { FaCaretUp, FaEdit } from 'react-icons/fa';
+import {
+	FaCaretUp,
+	FaEdit,
+	// FaTrashAlt
+} from 'react-icons/fa';
 import { useQueries } from 'react-query';
 import Comment from '../../components/Comment';
 import CTAButton from '../../components/CTAButton';
 import LoadingOrComponent from '../../components/LoadingOrComponent';
 import ProjectComment from '../../components/ProjectComment';
 import ProjectLogo from '../../components/ProjectLogo';
+import ScreenShotCarousel from '../../components/ScreenShotCarousel';
 import Tag from '../../components/Tag';
+import UsernameLink from '../../components/UsernameLink';
 import { useAuthUser } from '../../contexts/AuthUser';
 import useLoadingToast from '../../hooks/useLoadingToast';
+import useUpvoteMutation from '../../hooks/useUpvoteMutation';
 import {
 	getProjectById,
 	getProjectByIdComments,
@@ -48,6 +55,10 @@ const Project: NextPage = () => {
 		isLoading: isProjectLoading,
 		toastMsg: 'Fetching Project...',
 	});
+	useLoadingToast({
+		isLoading: isCommentsLoading,
+		toastMsg: 'Fetching the project comments...',
+	});
 
 	const {
 		id,
@@ -56,10 +67,24 @@ const Project: NextPage = () => {
 		subtitle,
 		description,
 		tag: tags,
-		postedAt,
+		url,
 		upvote,
+		votedByMe,
 		owner: projectOwner,
+		screenshots,
 	} = project || {};
+
+	const { onUpvote, isUpvoteLoading } = useUpvoteMutation({
+		projectId: projectId?.toString() ?? '',
+		projectVotedByMe: votedByMe ?? false,
+	});
+
+	// const onProjectDelete = () => {
+	// 	const isSure = confirm(
+	// 		'Are you sure you want to delete this project? This is irreversible',
+	// 	);
+	// 	if (!isSure) return;
+	// };
 
 	if (!isProjectLoading && !project)
 		return <h3>This project does not exist</h3>;
@@ -69,22 +94,32 @@ const Project: NextPage = () => {
 			<div className='flex flex-col items-center mx-3'>
 				<div className='w-full max-w-4xl'>
 					<div className='flex justify-between items-start'>
-						<ProjectLogo
-							src={`https://ph-files.imgix.net/405a0dc6-7d86-4566-941f-6d12cfe1bc73.jpeg?auto=format&auto=compress&codec=mozjpeg&cs=strip&w=60&h=60&fit=crop&bg=0fff`}
-						/>
+						<ProjectLogo src={logo || ''} />
 
 						{user.id?.toString() === projectOwner?.id ? (
-							<Link href={`/project/edit/${projectId}`}>
-								<a title='edit project'>
-									<FaEdit size='2em' className='text-gray-700 md:text-2xl' />
-								</a>
-							</Link>
+							<div className='flex gap-2 justify-between items-baseline'>
+								<Link href={`/project/edit/${projectId}`}>
+									<a title='edit project'>
+										<FaEdit size='2em' className='text-gray-700 md:text-2xl' />
+									</a>
+								</Link>
+
+								{/* <button title='delete project' onClick={onProjectDelete}>
+									<FaTrashAlt size='2em' className='text-red-500 md:text-2xl' />
+								</button> */}
+							</div>
 						) : null}
 					</div>
 
 					<div className='flex flex-wrap gap-4 items-baseline'>
 						<h1 className='text-xl font-bold mt-2'>{name}</h1>
-						<p className='text-slate-500'>by @{projectOwner?.username}</p>
+						<p className='text-slate-500 italic'>
+							- by{' '}
+							<UsernameLink
+								userId={projectOwner?.id || ''}
+								username={projectOwner?.username || ''}
+							/>
+						</p>
 					</div>
 
 					<div className='sm:flex items-start justify-between gap-5 sm:mb-6 sm:my-2'>
@@ -92,14 +127,29 @@ const Project: NextPage = () => {
 
 						<div className='flex gap-3 my-7 sm:my-0'>
 							<button className='border border-gray-400 hover:border-primary p-4 px-5 rounded'>
-								<Link href='/'>
+								<Link href={url!}>
 									<a>Visit</a>
 								</Link>
 							</button>
 
-							<CTAButton className='flex justify-center items-center gap-2 rounded lg:px-8 lg:py-3'>
-								<FaCaretUp className='text-3xl md:text-4xl' />
-								<span>Upvote</span>
+							<CTAButton
+								className='flex justify-center items-center gap-2 rounded lg:px-8 lg:py-3 border-4 border-primary'
+								isLoading={isUpvoteLoading}
+								iconProps={{ display: 'none' }}
+								style={
+									votedByMe
+										? { backgroundColor: 'transparent', color: 'currentcolor' }
+										: {}
+								}
+								onClick={onUpvote}
+							>
+								<FaCaretUp
+									className='text-3xl md:text-4xl'
+									style={{
+										color: votedByMe ? 'hsl(var(--color-primary))' : '',
+									}}
+								/>
+								<span>{votedByMe ? 'Upvoted' : 'Upvote'}</span>
 								<span>{upvote}</span>
 							</CTAButton>
 						</div>
@@ -113,9 +163,19 @@ const Project: NextPage = () => {
 
 					<hr className='my-5 border-gray-300' />
 
-					<p>
-						{description?.split('').map(c => (/[\n\t]/.test(c) ? <br /> : c))}
-					</p>
+					{description?.split(/[\n\r]/).map((str, i) => (
+						<p key={str + i}>{str}</p>
+					))}
+
+					<div className='mt-2'>
+						<ScreenShotCarousel
+							images={
+								screenshots
+									?.filter(Boolean)
+									.map(({ id, src }) => ({ imageId: id, src: src ?? '' })) ?? []
+							}
+						/>
+					</div>
 
 					<ProjectComment projectId={id!} />
 
@@ -126,6 +186,7 @@ const Project: NextPage = () => {
 							</h3>
 							{comments?.map(comment => (
 								<Comment
+									projectId={id ?? ''}
 									key={comment.id}
 									{...comment}
 									projectOwnerId={projectOwner?.id || ''}
