@@ -213,6 +213,7 @@ function ScreenShotCarouselFieldArray() {
 					id='screenshots'
 					className='hidden'
 					multiple
+					accept='images/*'
 					onChange={onFileInput}
 				/>
 			</label>

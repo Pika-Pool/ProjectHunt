@@ -7,6 +7,7 @@ export const createNewProjectGQL = gql`
 		$subtitle: String!
 		$tags: [String!]!
 		$logo: [Upload!]!
+		$screenshots: [Upload!]!
 	) {
 		createProject(
 			description: $description
@@ -14,6 +15,7 @@ export const createNewProjectGQL = gql`
 			subtitle: $subtitle
 			tags: $tags
 			logos: $logo
+			screenshots: $screenshots
 		) {
 			projectInstance {
 				id

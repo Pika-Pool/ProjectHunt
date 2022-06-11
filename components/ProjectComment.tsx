@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router';
 import type { FormEventHandler } from 'react';
-import { useMutation } from 'react-query';
+import toast from 'react-hot-toast';
+import { useMutation, useQueryClient } from 'react-query';
 import { useAuthUser } from '../contexts/AuthUser';
 import useLocalStorage from '../hooks/useLocalStorage';
 import { projectCommentDraftStorageKey } from '../lib/constants';
@@ -22,9 +23,16 @@ export default function ProjectComment({ projectId }: ProjectCommentProps) {
 		'',
 	);
 
+	const queryClient = useQueryClient();
 	const { mutate, isLoading } = useMutation(createNewCommentReq, {
-		onSuccess(_data) {
+		onSuccess(data) {
+			if (!data || data.error) {
+				console.error(data?.error);
+				toast.error('Something went wrong. Could ot submit your comment');
+				return;
+			}
 			setComment('');
+			queryClient.invalidateQueries(['getProjectByIdComments', projectId]);
 		},
 	});
 

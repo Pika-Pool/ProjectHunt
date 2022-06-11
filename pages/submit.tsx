@@ -7,6 +7,7 @@ import {
 	type SubmitHandler,
 	type UseFormProps,
 } from 'react-hook-form';
+import toast from 'react-hot-toast';
 import { useMutation } from 'react-query';
 import ProjectForm, { type ProjectFormValues } from '../components/ProjectForm';
 import { useAuthUser } from '../contexts/AuthUser';
@@ -40,8 +41,17 @@ const Submit: NextPage = () => {
 	// mutation query to create project
 	const { mutate, isLoading } = useMutation(createNewProjectReq, {
 		onSuccess(data) {
+			if (!data || data.error) {
+				toast.error('Something went wrong. Could not submit your project');
+				console.log(data);
+				return;
+			}
 			setFormDraft({});
 			router.push(`/project/${data.projectId}`);
+		},
+		onError(err) {
+			toast.error('Something went wrong. Could not submit your project');
+			console.log(err);
 		},
 	});
 	useLoadingToast({ isLoading, toastMsg: 'Registering your project...' });
@@ -51,7 +61,10 @@ const Submit: NextPage = () => {
 	const onFormSubmit: SubmitHandler<ProjectFormValues> = data => {
 		if (!isUserLoggedIn)
 			router.push({ pathname: '/auth/login', query: { from: '/submit' } });
-		else mutate(data);
+		else {
+			console.log({ data });
+			mutate(data);
+		}
 	};
 
 	return (
