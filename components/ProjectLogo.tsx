@@ -2,17 +2,20 @@ import classNames from 'classnames';
 import Image, { type ImageProps } from 'next/image';
 import { HTMLAttributes, useState } from 'react';
 import { FaImage } from 'react-icons/fa';
+import useImageFromServer from '../hooks/useImageFromServer';
 import styles from '../styles/utilities.module.css';
 
-export interface ProjectLogoProps extends ImageProps {
+export type ProjectLogoProps = Omit<ImageProps, 'src'> & {
+	src: string;
 	containerProps?: HTMLAttributes<HTMLDivElement>;
-}
+};
 
 export default function ProjectLogo({
 	containerProps: { className, ...containerProps } = {},
 	...imgProps
 }: ProjectLogoProps) {
 	const [isImageLoadingError, setIsImageLoadingError] = useState(false);
+	const logoSrcToUser = useImageFromServer(imgProps.src);
 
 	return (
 		<div
@@ -22,13 +25,14 @@ export default function ProjectLogo({
 			)}
 			{...containerProps}
 		>
-			{imgProps.src && !isImageLoadingError ? (
+			{logoSrcToUser && !isImageLoadingError ? (
 				<Image
 					alt='logo'
 					layout='fill'
 					objectFit='cover'
 					className='rounded'
 					{...imgProps}
+					src={logoSrcToUser}
 					onError={e => {
 						setIsImageLoadingError(true);
 						imgProps.onError?.(e);

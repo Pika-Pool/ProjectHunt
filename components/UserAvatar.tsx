@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { useState } from 'react';
+import useImageFromServer from '../hooks/useImageFromServer';
 
 export interface UserAvatarProps {
 	size?: string;
@@ -13,15 +14,16 @@ export default function UserAvatar({
 	username,
 }: UserAvatarProps) {
 	const [isImageLoadingError, setIsImageLoadingError] = useState(false);
+	const avatarToUse = useImageFromServer(avatar);
 
 	return (
 		<div
 			className='rounded-full relative overflow-hidden'
 			style={{ width: size, height: size }}
 		>
-			{avatar && !isImageLoadingError ? (
+			{avatarToUse && !isImageLoadingError ? (
 				<Image
-					src={avatar}
+					src={avatarToUse}
 					alt={username || 'user avatar'}
 					layout='fill'
 					objectFit='cover'
