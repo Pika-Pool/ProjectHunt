@@ -23,7 +23,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 				defaultOptions: {
 					queries: {
 						refetchOnWindowFocus: false,
-						staleTime: 10 * 60 * 1000, // 10min
+						// staleTime: 10 * 60 * 1000, // 10min
 					},
 				},
 			}),

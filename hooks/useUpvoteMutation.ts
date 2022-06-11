@@ -30,6 +30,10 @@ export default function useUpvoteMutation({
 			}
 			queryClient.invalidateQueries(['getProjectById', projectId]);
 			queryClient.invalidateQueries('allProjects');
+			queryClient.invalidateQueries([
+				'getProjectsByUser',
+				data.projectInstance?.owner.id,
+			]);
 		},
 		onError(err) {
 			toast.error('Something went wrong. Could not upvote the project');

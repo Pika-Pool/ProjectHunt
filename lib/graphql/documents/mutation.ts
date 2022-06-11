@@ -110,6 +110,9 @@ export const voteOnProjectGQL = gql`
 				upvote: voteCount
 				id
 				votedByMe
+				owner: ownerId {
+					id
+				}
 			}
 			error
 			message

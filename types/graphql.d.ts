@@ -421,6 +421,7 @@ export type VoteOnProjectMutation = {
 			id: string;
 			votedByMe?: boolean | null;
 			upvote?: number | null;
+			owner: { __typename?: 'ProfileType'; id: string };
 		} | null;
 	} | null;
 };

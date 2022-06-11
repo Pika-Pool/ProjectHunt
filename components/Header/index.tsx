@@ -1,3 +1,4 @@
+import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { websiteName } from '../../lib/constants';
 import BackButton from './BackButton';
@@ -16,6 +17,10 @@ export default function Header({ title, withBackBtn }: HeaderProps) {
 
 	return (
 		<header className='text-white bg-primary px-3 pb-1 pt-10 md:py-3 md:px-4 shadow-lg shadow-gray-300 flex gap-3'>
+			<Head>
+				<title>ProjectHunts</title>
+			</Head>
+
 			{withBackBtn ? <BackButton /> : null}
 
 			<h1 className='capitalize text-3xl md:text-2xl'>{title}</h1>

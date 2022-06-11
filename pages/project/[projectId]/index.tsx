@@ -8,21 +8,21 @@ import {
 	// FaTrashAlt
 } from 'react-icons/fa';
 import { useQueries } from 'react-query';
-import Comment from '../../components/Comment';
-import CTAButton from '../../components/CTAButton';
-import LoadingOrComponent from '../../components/LoadingOrComponent';
-import ProjectComment from '../../components/ProjectComment';
-import ProjectLogo from '../../components/ProjectLogo';
-import ScreenShotCarousel from '../../components/ScreenShotCarousel';
-import Tag from '../../components/Tag';
-import UsernameLink from '../../components/UsernameLink';
-import { useAuthUser } from '../../contexts/AuthUser';
-import useLoadingToast from '../../hooks/useLoadingToast';
-import useUpvoteMutation from '../../hooks/useUpvoteMutation';
+import Comment from '../../../components/Comment';
+import CTAButton from '../../../components/CTAButton';
+import LoadingOrComponent from '../../../components/LoadingOrComponent';
+import ProjectComment from '../../../components/ProjectComment';
+import ProjectLogo from '../../../components/ProjectLogo';
+import ScreenShotCarousel from '../../../components/ScreenShotCarousel';
+import Tag from '../../../components/Tag';
+import UsernameLink from '../../../components/UsernameLink';
+import { useAuthUser } from '../../../contexts/AuthUser';
+import useLoadingToast from '../../../hooks/useLoadingToast';
+import useUpvoteMutation from '../../../hooks/useUpvoteMutation';
 import {
 	getProjectById,
 	getProjectByIdComments,
-} from '../../lib/graphql/requests/query';
+} from '../../../lib/graphql/requests/query';
 
 const Project: NextPage = () => {
 	const { user } = useAuthUser();
@@ -98,7 +98,7 @@ const Project: NextPage = () => {
 
 						{user.id?.toString() === projectOwner?.id ? (
 							<div className='flex gap-2 justify-between items-baseline'>
-								<Link href={`/project/edit/${projectId}`}>
+								<Link href={`/project/${projectId}/edit`}>
 									<a title='edit project'>
 										<FaEdit size='2em' className='text-gray-700 md:text-2xl' />
 									</a>

@@ -51,7 +51,7 @@ export default function AuthUserProvider({
 		['/profile/', isLoggedIn],
 		async () => (await getUserProfile()) ?? userInit,
 		{
-			initialData: userInit,
+			placeholderData: userInit,
 			enabled: isLoggedIn,
 			refetchOnWindowFocus: false,
 			onSuccess(data) {
