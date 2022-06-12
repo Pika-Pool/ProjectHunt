@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import useImageFromServer from '../hooks/useImageFromServer';
 
 export interface UserAvatarProps {
@@ -15,6 +15,10 @@ export default function UserAvatar({
 }: UserAvatarProps) {
 	const [isImageLoadingError, setIsImageLoadingError] = useState(false);
 	const avatarToUse = useImageFromServer(avatar);
+
+	useEffect(() => {
+		setIsImageLoadingError(false);
+	}, [avatarToUse]);
 
 	return (
 		<div
