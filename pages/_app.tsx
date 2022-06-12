@@ -1,4 +1,5 @@
 import type { NextPage } from 'next';
+import NextProgress from 'next-progress';
 import type { AppProps } from 'next/app';
 import { useState, type ReactElement, type ReactNode } from 'react';
 import { Toaster } from 'react-hot-toast';
@@ -34,6 +35,11 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		<QueryClientProvider client={queryClient}>
 			<AuthUserProvider>
 				<Toaster />
+				<NextProgress
+					delay={300}
+					height='3px'
+					options={{ showSpinner: false }}
+				/>
 
 				{getLayout ? (
 					getLayout(<Component {...pageProps} />)
