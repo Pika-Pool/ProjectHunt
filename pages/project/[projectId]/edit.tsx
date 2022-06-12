@@ -69,7 +69,20 @@ const EditProject: NextPage = () => {
 	// mutation query to create project
 	const { mutate, isLoading: isLoadingFormSubmit } = useMutation(
 		editProjectReq,
-		{ onSuccess: data => router.push(`/project/${data.projectId}`) },
+		{
+			onSuccess: data => {
+				if (!data || data.error) {
+					console.log(data?.error);
+					toast.error('Could not update your project. Something went wrong');
+					return;
+				}
+				router.push(`/project/${data.projectId}`);
+			},
+			onError: err => {
+				console.log(err);
+				toast.error('Could not update your project. Something went wrong');
+			},
+		},
 	);
 	useLoadingToast({
 		isLoading: isLoadingFormSubmit,
