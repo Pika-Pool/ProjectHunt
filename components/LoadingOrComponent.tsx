@@ -5,15 +5,19 @@ export interface LoadingOrComponentProps {
 	isLoading?: boolean;
 	size?: string;
 	message?: string;
+	shouldShowSpinner?: boolean;
 }
 
 export default function LoadingOrComponent({
 	isLoading,
 	size,
 	message = 'Loading...',
+	shouldShowSpinner = true,
 	children,
 }: PropsWithChildren<LoadingOrComponentProps>) {
 	if (isLoading) {
+		if (!shouldShowSpinner) return null;
+
 		return (
 			<div className='flex items-center justify-center space-x-2 relative'>
 				<div
