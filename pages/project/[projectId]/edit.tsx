@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
-import { useMutation, useQuery } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import ClientOnly from '../../../components/ClientOnly';
 import LoadingOrComponent from '../../../components/LoadingOrComponent';
 import ProjectForm, {
@@ -66,6 +66,7 @@ const EditProject: NextPage = () => {
 		});
 	}, [project, useFormReturn]);
 
+	const queryClient = useQueryClient();
 	// mutation query to create project
 	const { mutate, isLoading: isLoadingFormSubmit } = useMutation(
 		editProjectReq,
@@ -76,6 +77,14 @@ const EditProject: NextPage = () => {
 					toast.error('Could not update your project. Something went wrong');
 					return;
 				}
+
+				queryClient.invalidateQueries([
+					'getProjectsByUser',
+					data.projectInstance?.owner.id,
+				]);
+				queryClient.invalidateQueries(['getProjectById', data.projectId]);
+				queryClient.invalidateQueries('allProjects');
+
 				router.push(`/project/${data.projectId}`);
 			},
 			onError: err => {

@@ -8,7 +8,7 @@ import { getAllProjects } from '../lib/graphql/requests/query';
 import type { GetAllProjectsQuery } from '../types/graphql';
 
 // a project object
-type TProject = NonNullable<
+export type TProject = NonNullable<
 	NonNullable<GetAllProjectsQuery['allProject']>[number]
 >;
 

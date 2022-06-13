@@ -19,6 +19,9 @@ export const createNewProjectGQL = gql`
 		) {
 			projectInstance {
 				id
+				owner: ownerId {
+					id
+				}
 			}
 			error
 			message
@@ -49,6 +52,9 @@ export const editProjectGQL = gql`
 		) {
 			projectInstance {
 				id
+				owner: ownerId {
+					id
+				}
 			}
 			error
 			message

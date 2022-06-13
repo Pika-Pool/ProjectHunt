@@ -18,6 +18,7 @@ import graphqlClient from '../../graphqlClient';
 import {
 	createNewCommentGQL,
 	createNewProjectGQL,
+	deleteCommentGQL,
 	editCommentGQL,
 	editProjectGQL,
 	updateProfileGQL,
@@ -93,7 +94,7 @@ export async function deleteCommentReq({
 	const { deleteComment } = await graphqlClient.request<
 		DeleteCommentMutation,
 		DeleteCommentMutationVariables
-	>(updateProfileGQL, { commentId });
+	>(deleteCommentGQL, { commentId });
 
 	return deleteComment;
 }

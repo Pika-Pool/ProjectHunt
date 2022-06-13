@@ -8,7 +8,7 @@ import {
 	type UseFormProps,
 } from 'react-hook-form';
 import toast from 'react-hot-toast';
-import { useMutation } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import ProjectForm, { type ProjectFormValues } from '../components/ProjectForm';
 import { useAuthUser } from '../contexts/AuthUser';
 import useLoadingToast from '../hooks/useLoadingToast';
@@ -38,6 +38,7 @@ const Submit: NextPage = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [setFormDraft, useFormReturn.watch]);
 
+	const queryClient = useQueryClient();
 	// mutation query to create project
 	const { mutate, isLoading } = useMutation(createNewProjectReq, {
 		onSuccess(data) {
@@ -47,6 +48,13 @@ const Submit: NextPage = () => {
 				return;
 			}
 			setFormDraft({});
+
+			queryClient.invalidateQueries([
+				'getProjectsByUser',
+				data.projectInstance?.owner.id,
+			]);
+			queryClient.invalidateQueries('allProjects');
+
 			router.push(`/project/${data.projectId}`);
 		},
 		onError(err) {

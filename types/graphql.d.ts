@@ -306,6 +306,7 @@ export type CreateNewProjectMutationVariables = Exact<{
 	subtitle: Scalars['String'];
 	tags: Array<Scalars['String']> | Scalars['String'];
 	logo: Array<Scalars['Upload']> | Scalars['Upload'];
+	screenshots: Array<Scalars['Upload']> | Scalars['Upload'];
 }>;
 
 export type CreateNewProjectMutation = {
@@ -314,7 +315,11 @@ export type CreateNewProjectMutation = {
 		__typename?: 'ProjectCreateMutation';
 		error?: boolean | null;
 		message?: string | null;
-		projectInstance?: { __typename?: 'ProjectType'; id: string } | null;
+		projectInstance?: {
+			__typename?: 'ProjectType';
+			id: string;
+			owner: { __typename?: 'ProfileType'; id: string };
+		} | null;
 	} | null;
 };
 
@@ -335,7 +340,11 @@ export type EditProjectMutation = {
 		__typename?: 'ProjectUpdateMutation';
 		error?: boolean | null;
 		message?: string | null;
-		projectInstance?: { __typename?: 'ProjectType'; id: string } | null;
+		projectInstance?: {
+			__typename?: 'ProjectType';
+			id: string;
+			owner: { __typename?: 'ProfileType'; id: string };
+		} | null;
 	} | null;
 };
 
